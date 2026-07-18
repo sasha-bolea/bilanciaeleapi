@@ -1,0 +1,27 @@
+{
+  "name": "bilanciaeleapi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "seed": "node scripts/seed.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "chart.js": "^4.4.4",
+    "nuxt": "^3.13.0",
+    "vue": "^3.4.38",
+    "vue-chartjs": "^5.3.1",
+    "vue-router": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^2.2.12"
+  }
+}
