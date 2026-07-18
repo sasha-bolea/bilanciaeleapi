@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Arnia, Misura } from '~/types/database'
-import { rilevaVariazioniSospette } from '~/composables/useArniaAlerts'
+import { rilevaSciamature } from '~/composables/useArniaAlerts'
 
 const props = defineProps<{
   arnia: Arnia
@@ -23,10 +23,9 @@ const direzione = computed<'su' | 'giu' | 'stabile'>(() => {
   return 'stabile'
 })
 
-const variazioniSospette = computed(() =>
-  rilevaVariazioniSospette(props.misureRecenti).filter((m) => m.variazioneSospetta)
-)
-const haAllerta = computed(() => variazioniSospette.value.length > 0)
+const sciamature = computed(() => rilevaSciamature(props.misureRecenti))
+const haAllerta = computed(() => sciamature.value.length > 0)
+const caloSciamatura = computed(() => sciamature.value.at(-1)?.deltaKg ?? null)
 
 const batteriaBassa = computed(() => (ultima.value?.batteria_v ?? 99) < 3.6)
 
@@ -75,7 +74,8 @@ const formattaVariazione = (v: number | null) => {
     </div>
 
     <p v-if="haAllerta" class="arnia-card__allerta-testo">
-      ⚠️ Variazione di peso sospetta rilevata: possibile sciamatura o furto
+      🐝 Possibile sciamatura<template v-if="caloSciamatura !== null">
+        ({{ caloSciamatura.toFixed(1) }} kg</template>) — calo di peso drastico
     </p>
   </NuxtLink>
 </template>

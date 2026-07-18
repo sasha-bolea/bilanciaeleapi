@@ -11,7 +11,7 @@ import {
   type ChartOptions
 } from 'chart.js'
 import { Line } from 'vue-chartjs'
-import { rilevaVariazioniSospette } from '~/composables/useArniaAlerts'
+import { annotaMisure } from '~/composables/useArniaAlerts'
 import type { Misura } from '~/types/database'
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Filler)
@@ -21,7 +21,7 @@ const props = defineProps<{
   periodoGiorni: number
 }>()
 
-const misureConAlert = computed(() => rilevaVariazioniSospette(props.misure))
+const misureConAlert = computed(() => annotaMisure(props.misure))
 
 const formattaEtichetta = (iso: string) => {
   const d = new Date(iso)
@@ -42,10 +42,10 @@ const chartData = computed<ChartData<'line'>>(() => ({
       fill: true,
       tension: 0.25,
       borderWidth: 2,
-      pointRadius: misureConAlert.value.map((m) => (m.variazioneSospetta ? 5 : 0)),
+      pointRadius: misureConAlert.value.map((m) => (m.sciamatura ? 5 : 0)),
       pointHoverRadius: 5,
       pointBackgroundColor: misureConAlert.value.map((m) =>
-        m.variazioneSospetta ? '#d94f4f' : '#c9840d'
+        m.sciamatura ? '#d94f4f' : '#c9840d'
       )
     }
   ]

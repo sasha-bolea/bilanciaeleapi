@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Arnia, Misura } from '~/types/database'
-import { rilevaVariazioniSospette } from '~/composables/useArniaAlerts'
+import { rilevaSciamature } from '~/composables/useArniaAlerts'
 
 const route = useRoute()
 const arniaId = computed(() => route.params.id as string)
@@ -41,9 +41,7 @@ const {
 
 const haSensoreTemperatura = computed(() => (misure.value ?? []).some((m) => m.temperatura_c !== null))
 
-const variazioniSospette = computed(() =>
-  rilevaVariazioniSospette(misure.value ?? []).filter((m) => m.variazioneSospetta)
-)
+const sciamature = computed(() => rilevaSciamature(misure.value ?? []))
 
 const formattaData = (iso: string) =>
   new Date(iso).toLocaleString('it-IT', {
@@ -85,16 +83,21 @@ const error = computed(() => arniaError.value || misureError.value)
         </button>
       </div>
 
-      <div v-if="variazioniSospette.length > 0" class="allerta-banner">
-        <span class="allerta-banner__icona">⚠️</span>
+      <div v-if="sciamature.length > 0" class="allerta-banner">
+        <span class="allerta-banner__icona">🐝</span>
         <div>
-          <strong>Variazioni di peso sospette nel periodo selezionato</strong>
+          <strong>
+            {{ sciamature.length === 1 ? 'Possibile sciamatura rilevata' : 'Possibili sciamature rilevate' }}
+          </strong>
           <p style="margin: 4px 0 0">
-            Possibile sciamatura o furto: calo/aumento di oltre 1 kg in poche ore.
+            Calo di peso drastico e improvviso: possibile sciamatura o furto.
           </p>
           <ul>
-            <li v-for="m in variazioniSospette" :key="m.id">
-              {{ formattaData(m.created_at) }} — {{ m.peso_kg.toFixed(2) }} kg
+            <li v-for="e in sciamature" :key="e.misura.id">
+              {{ formattaData(e.misura.created_at) }} —
+              <strong>{{ e.deltaKg.toFixed(1) }} kg</strong>
+              in circa {{ Math.round(e.oreTrascorse) || 1 }} h
+              (peso {{ e.misura.peso_kg.toFixed(2) }} kg)
             </li>
           </ul>
         </div>
