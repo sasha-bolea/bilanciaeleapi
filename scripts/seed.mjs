@@ -46,8 +46,9 @@ const ARNIE = [
     pesoBase: 45,
     crescitaMediaKgGiorno: 0.05,
     haSensoreTemperatura: true,
-    // sciamatura simulata: calo improvviso di 1.5kg in un'ora, tra il giorno 12 e 18
-    sciamatura: { giorno: 14, ora: 11, caloKg: 1.5 }
+    // sciamatura simulata: calo improvviso di 1.5kg ~15h prima della fine,
+    // cosi' e' visibile in home (variazione 24h) e in tutti i periodi.
+    sciamatura: { orePrimaFine: 15, caloKg: 1.5 }
   },
   {
     id: 'A3',
@@ -80,7 +81,7 @@ function generaMisureArnia(arnia, timestamps) {
   }
 
   const sciamaturaTimestamp = arnia.sciamatura
-    ? timestamps[arnia.sciamatura.giorno * 24 + arnia.sciamatura.ora]
+    ? timestamps[timestamps.length - 1 - arnia.sciamatura.orePrimaFine]
     : null
 
   const misure = []
@@ -172,7 +173,7 @@ async function main() {
     }
 
     if (arnia.sciamatura) {
-      const ts = timestamps[arnia.sciamatura.giorno * 24 + arnia.sciamatura.ora]
+      const ts = timestamps[timestamps.length - 1 - arnia.sciamatura.orePrimaFine]
       console.log(
         `  -> Sciamatura simulata su ${arnia.id} alle ${ts.toISOString()} (-${arnia.sciamatura.caloKg} kg)`
       )

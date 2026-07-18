@@ -25,12 +25,14 @@ with params as (
     date_trunc('hour', now()) - interval '719 hours'   as inizio
 ),
 arnie_cfg as (
-  -- arnia_id, peso base (kg), crescita media (kg/giorno), sensore temp?, giorno sciamatura (null = nessuna)
+  -- arnia_id, peso base (kg), crescita media (kg/giorno), sensore temp?,
+  -- ore prima della fine in cui simulare la sciamatura (null = nessuna).
+  -- A2 sciama ~15h fa, cosi' l'allarme e' visibile in home (finestra 24h).
   select * from (values
     ('A1', 38.0::numeric, 0.06::numeric, true,  null::int),
-    ('A2', 45.0::numeric, 0.05::numeric, true,  14),
+    ('A2', 45.0::numeric, 0.05::numeric, true,  15),
     ('A3', 41.0::numeric, 0.07::numeric, false, null::int)
-  ) as t(arnia_id, peso_base, crescita, has_temp, swarm_day)
+  ) as t(arnia_id, peso_base, crescita, has_temp, swarm_ore_prima)
 ),
 serie as (
   select generate_series(0, 719) as i
@@ -44,9 +46,9 @@ righe as (
     a.has_temp,
     floor(s.i / 24.0) as giorno,
     case
-      when a.swarm_day is not null
+      when a.swarm_ore_prima is not null
        and p.inizio + (s.i * interval '1 hour')
-           >= p.inizio + ((a.swarm_day * 24 + 11) * interval '1 hour')
+           >= p.fine - (a.swarm_ore_prima * interval '1 hour')
       then -1.5 else 0
     end as calo_sciamatura
   from serie s
