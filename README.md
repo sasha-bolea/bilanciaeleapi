@@ -61,6 +61,13 @@ delle 3 arnie e le rigenera.
 npm run seed
 ```
 
+### Alternativa: seed in SQL puro
+
+[`scripts/seed.sql`](./scripts/seed.sql) genera gli stessi dati con la
+stessa logica ma in SQL puro, **senza bisogno della service_role key**.
+Utile se preferisci popolare il database direttamente dal SQL Editor di
+Supabase (o via connettore MCP): incolla ed esegui il contenuto del file.
+
 Richiede nel `.env` (root del progetto, vedi `.env.example`):
 
 ```
