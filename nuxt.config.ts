@@ -4,10 +4,13 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // I valori vengono forniti a runtime dalle env vars NUXT_PUBLIC_SUPABASE_URL
+  // e NUXT_PUBLIC_SUPABASE_ANON_KEY (override automatico di Nuxt). I default a
+  // stringa vuota garantiscono che le chiavi esistano per l'override sul server.
   runtimeConfig: {
     public: {
-      supabaseUrl: process.env.NUXT_PUBLIC_SUPABASE_URL,
-      supabaseAnonKey: process.env.NUXT_PUBLIC_SUPABASE_ANON_KEY
+      supabaseUrl: '',
+      supabaseAnonKey: ''
     }
   },
 
